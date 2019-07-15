@@ -1,0 +1,83 @@
+spring:
+  profiles:
+    active: dev
+
+camel.springboot.shutdownTimeout: 2
+
+---
+spring:
+  profiles: mock
+  dataSource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://localhost:5432/cameldb
+    username: cameluser
+    password: camelpassword
+
+
+startRoute: direct:input
+fromRoute: file:data/dev/input?delete=true&readLock=none
+toRoute: mock:output
+toRouteDB: jdbc:dataSource
+toRouteSuccess: file:data/output?fileName=Success.txt
+
+message: MOCK Environment
+
+---
+---
+spring:
+  profiles: dev
+  dataSource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://localhost:5432/cameldb
+    username: cameluser
+    password: camelpassword
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+startRoute: timer:hello?period=10s
+fromRoute: file:data/dev/input?delete=true&readLock=none
+toRoute: file:data/dev/output
+toRouteDB: jdbc:dataSource
+toRouteSuccess: file:data/output?fileName=Success.txt
+
+message: DEV Environment
+
+---
+spring:
+  profiles: stage
+  dataSource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://localhost:5432/cameldb
+    username: cameluser
+    password: camelpassword
+
+startRoute: timer:hello?period=10s
+fromRoute: file:data/stage/input?delete=true&readLock=none
+toRoute: file:data/stage/output
+toRouteDB: jdbc:dataSource
+toRouteSuccess: file:data/output?fileName=Success.txt
+
+message: STAGE Environment
+
+---
+spring:
+  profiles: prod
+  dataSource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://localhost:5432/cameldb
+    username: cameluser
+    password: camelpassword
+
+startRoute: timer:hello?period=10s
+fromRoute: file:data/prod/input?delete=true&readLock=none
+toRoute: file:data/prod/output
+toRouteDB: jdbc:dataSource
+toRouteSuccess: file:data/output?fileName=Success.txt
+
+message: PROD Environment
+
+---
