@@ -46,12 +46,17 @@ spring:
 mailto: <Mail to>
 mailFrom: <Mail from>
 
-startRoute: direct:input
+startRoute: direct:input1
 fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
 toRoute: mock:output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: direct:health
+
+fromKafkaRoute: direct:input
+toKafkaRoute: log:?level=INFO&showBody==true
+errorKafkaRoute: mock:output1
+selectNode: mock:output2
 
 message: MOCK Environment
 
@@ -79,8 +84,8 @@ spring:
     properties.mail.smtp.auth: true
     properties.mail.smtp.starttls.enable: true
 
-mailTo: <mail to>
-mailFrom: <mail from>
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: timer:hello?period=10s
 fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
@@ -88,6 +93,11 @@ toRoute: file:data/dev/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
+
+fromKafkaRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=3
+toKafkaRoute: jdbc:dataSource
+errorKafkaRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
 
 message: DEV Environment
 
@@ -121,6 +131,11 @@ toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
 
+fromKafkaRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=1
+toKafkaRoute: jdbc:dataSource
+errorKafkaRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
+
 message: STAGE Environment
 
 ---
@@ -152,6 +167,11 @@ toRoute: file:data/prod/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
+
+fromKafkaRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=1
+toKafkaRoute: jdbc:dataSource
+errorKafkaRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
 
 message: PROD Environment
 

@@ -2,6 +2,7 @@ package net.shakya.learnCamelSpringBoot.process;
 
 import lombok.extern.slf4j.Slf4j;
 import net.shakya.learnCamelSpringBoot.domain.Item;
+import net.shakya.learnCamelSpringBoot.domain.ItemJSON;
 import net.shakya.learnCamelSpringBoot.exceptions.DataException;
 import org.apache.camel.Exchange;
 import org.springframework.stereotype.Component;
@@ -9,12 +10,12 @@ import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Component
-public class BuildSQLProcessor implements org.apache.camel.Processor {
+public class BuildJSONSQLProcessor implements org.apache.camel.Processor {
 
   @Override
   public void process(Exchange exchange) throws Exception {
 
-    Item item = (Item) exchange.getIn().getBody();
+    ItemJSON item = (ItemJSON) exchange.getIn().getBody();
     log.info("Item in Processor is : " + item);
     String query = getQuery(item);
     log.info("Final Query is : " + query);
@@ -23,10 +24,11 @@ public class BuildSQLProcessor implements org.apache.camel.Processor {
       throw new DataException("SKU is null for " + item.getItemDescription());
     }
     exchange.getIn().setBody(query);
+    exchange.getIn().setHeader("skuId", item.getSku());
 
   }
 
-  private String getQuery(Item item){
+  private String getQuery(ItemJSON item){
     if (item.getTransactionType().equalsIgnoreCase("ADD")){
       return String.format("INSERT INTO ITEMS (SKU, ITEM_DESCRIPTION, PRICE) VALUES ('%s','%s', %.2f)",
           item.getSku(), item.getItemDescription(), item.getPrice().floatValue());
