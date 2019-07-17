@@ -2,8 +2,10 @@ package net.shakya.learnCamelSpringBoot.process;
 
 import lombok.extern.slf4j.Slf4j;
 import net.shakya.learnCamelSpringBoot.domain.Item;
+import net.shakya.learnCamelSpringBoot.exceptions.DataException;
 import org.apache.camel.Exchange;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Component
@@ -16,13 +18,17 @@ public class BuildSQLProcessor implements org.apache.camel.Processor {
     log.info("Item in Processor is : " + item);
     String query = getQuery(item);
     log.info("Final Query is : " + query);
+
+    if (ObjectUtils.isEmpty(item.getSku())){
+      throw new DataException("SKU is null for " + item.getItemDescription());
+    }
     exchange.getIn().setBody(query);
 
   }
 
   private String getQuery(Item item){
     if (item.getTransactionType().equalsIgnoreCase("ADD")){
-      return String.format("INSERT INTO ITEMS (SKU, ITEM_DESCRIPTION, PRICE) VALUES ('%s','%s', %.2f)",
+      return String.format("INSERT INTO ITEMS1 (SKU, ITEM_DESCRIPTION, PRICE) VALUES ('%s','%s', %.2f)",
           item.getSku(), item.getItemDescription(), item.getPrice().floatValue());
     }
     if (item.getTransactionType().equalsIgnoreCase("UPDATE")){

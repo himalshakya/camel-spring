@@ -2,7 +2,26 @@ spring:
   profiles:
     active: dev
 
-camel.springboot.shutdownTimeout: 2
+#camel.springboot.shutdownTimeout: 2
+
+camel:
+  springboot:
+    shutdownTimeout: 2
+    health:
+      indicator:
+        enabled: true
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,hawtio,jolokia"
+
+hawtio:
+  authenticationEnabled: false
 
 ---
 spring:
@@ -10,15 +29,29 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: cameluser
-    password: camelpassword
+    username: <camel user>
+    password: <camel password>
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: direct:input
-fromRoute: file:data/dev/input?delete=true&readLock=none
+fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
 toRoute: mock:output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
+healthRoute: direct:health
 
 message: MOCK Environment
 
@@ -29,8 +62,8 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: cameluser
-    password: camelpassword
+    username: <camel user>
+    password: <camel password>
   jpa:
     properties:
       hibernate:
@@ -38,11 +71,23 @@ spring:
           lob:
             non_contextual_creation: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+
+mailTo: <mail to>
+mailFrom: <mail from>
+
 startRoute: timer:hello?period=10s
-fromRoute: file:data/dev/input?delete=true&readLock=none
+fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
 toRoute: file:data/dev/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
+healthRoute: timer:healthRoute?period=10s
 
 message: DEV Environment
 
@@ -52,14 +97,29 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: cameluser
-    password: camelpassword
+    username: <camel user>
+    password: <camel password>
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: timer:hello?period=10s
-fromRoute: file:data/stage/input?delete=true&readLock=none
+fromRoute: file:data/stage/input?delete=true&readLock=none&moveFailed=error
 toRoute: file:data/stage/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
+healthRoute: timer:healthRoute?period=10s
 
 message: STAGE Environment
 
@@ -69,14 +129,29 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: cameluser
-    password: camelpassword
+    username: <camel user>
+    password: <camel password>
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: timer:hello?period=10s
-fromRoute: file:data/prod/input?delete=true&readLock=none
+fromRoute: file:data/prod/input?delete=true&readLock=none&moveFailed=error
 toRoute: file:data/prod/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
+healthRoute: timer:healthRoute?period=10s
 
 message: PROD Environment
 

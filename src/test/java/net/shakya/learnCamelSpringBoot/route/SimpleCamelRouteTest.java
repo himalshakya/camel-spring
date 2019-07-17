@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import net.shakya.learnCamelSpringBoot.exceptions.DataException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
@@ -108,5 +109,20 @@ public class SimpleCamelRouteTest {
     String outputMessage = "Data Updated Successfully";
     String output = new String(Files.readAllBytes(Paths.get("data/output/Success.txt")));
     Assert.assertEquals(outputMessage, output);
+  }
+
+  @Test
+  public void testMoveFile_ADD_Exception() throws InterruptedException, IOException {
+    String message = "type,sku#,itemdescription,price\n"
+        + "ADD,,Samsung TV,500";
+//        + "ADD,101,LG TV,500";
+
+    String filename = "fileAddTest.txt";
+
+    producerTemplate.sendBodyAndHeader(environment.getProperty("fromRoute"), message, Exchange.FILE_NAME, filename);
+    Thread.sleep(3000);
+
+    File successFile = new File("data/dev/output/Success.txt");
+    Assert.assertFalse(successFile.exists());
   }
 }
