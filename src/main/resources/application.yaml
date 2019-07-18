@@ -43,10 +43,11 @@ spring:
           starttls:
             enable: true
 
+
 mailto: <Mail to>
 mailFrom: <Mail from>
 
-startRoute: direct:input
+startRoute: direct:input1
 fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
 toRoute: mock:output
 toRouteDB: jdbc:dataSource
@@ -78,9 +79,15 @@ spring:
     password: <login password to smtp server>
     properties.mail.smtp.auth: true
     properties.mail.smtp.starttls.enable: true
+  activemq:
+    brokerUrl: tcp://localhost:61616
+    user: admin
+    password: admin
+    packages.trust-all: true
 
-mailTo: <mail to>
-mailFrom: <mail from>
+
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: timer:hello?period=10s
 fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
@@ -88,6 +95,11 @@ toRoute: file:data/dev/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
+
+fromActiveMQRoute: activemq:inputItemQueue
+toActiveMQRoute: jdbc:dataSource
+errorActiveMQRoute: activemq:errorItemQueue
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
 
 message: DEV Environment
 
@@ -97,8 +109,8 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: <camel user>
-    password: <camel password>
+    username: cameluser
+    password: camelpassword
   mail:
     host: smtp.gmail.com
     port: 587
@@ -111,6 +123,7 @@ spring:
           starttls:
             enable: true
 
+
 mailto: <Mail to>
 mailFrom: <Mail from>
 
@@ -121,6 +134,11 @@ toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
 
+fromActiveMQRoute: activemq:inputItemQueue
+toActiveMQRoute: jdbc:dataSource
+errorActiveMQRoute: activemq:errorItemQueue
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
+
 message: STAGE Environment
 
 ---
@@ -129,8 +147,8 @@ spring:
   dataSource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
-    username: <camel user>
-    password: <camel password>
+    username: cameluser
+    password: camelpassword
   mail:
     host: smtp.gmail.com
     port: 587
@@ -152,6 +170,11 @@ toRoute: file:data/prod/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
+
+fromActiveMQRoute: activemq:inputItemQueue
+toActiveMQRoute: jdbc:dataSource
+errorActiveMQRoute: activemq:errorItemQueue
+selectNode: sql:SELECT * FROM items WHERE sku = :#skuId?dataSource=#dataSource
 
 message: PROD Environment
 

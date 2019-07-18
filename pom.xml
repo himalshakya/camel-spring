@@ -42,16 +42,36 @@
 		</dependency>
 
 
-<!--		<dependency>-->
-<!--			<groupId>org.apache.camel</groupId>-->
-<!--			<artifactId>camel-stream-starter</artifactId>-->
-<!--		</dependency>-->
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>activemq-broker</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-camel</artifactId>
+			<version>5.15.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jms</artifactId>
+			<version>${camel-version}</version>
+		</dependency>
+
+
 
 		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-test-spring -->
 		<dependency>
@@ -84,26 +104,20 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-sql</artifactId>
 			<version>${camel-version}</version>
-			<!-- use the same version as your Camel core version -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http</artifactId>
 			<version>${camel-version}</version>
-			<!-- use the same version as your Camel core version -->
 		</dependency>
 
-
-
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -131,14 +145,17 @@
       <version>42.2.5</version>
     </dependency>
 
-
-
 		<dependency>
 			<groupId>io.hawt</groupId>
 			<artifactId>hawtio-springboot</artifactId>
 			<version>2.7.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-gson</artifactId>
+			<version>${camel-version}</version>
+		</dependency>
 
   </dependencies>
 
