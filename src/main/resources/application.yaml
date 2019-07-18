@@ -64,13 +64,6 @@ spring:
     jdbc-url: jdbc:postgresql://localhost:5432/cameldb
     username: <camel user>
     password: <camel password>
-  jpa:
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -79,8 +72,8 @@ spring:
     properties.mail.smtp.auth: true
     properties.mail.smtp.starttls.enable: true
 
-mailTo: <mail to>
-mailFrom: <mail from>
+mailto: <Mail to>
+mailFrom: <Mail from>
 
 startRoute: timer:hello?period=10s
 fromRoute: file:data/dev/input?delete=true&readLock=none&moveFailed=error
@@ -88,6 +81,11 @@ toRoute: file:data/dev/output
 toRouteDB: jdbc:dataSource
 toRouteSuccess: file:data/output?fileName=Success.txt
 healthRoute: timer:healthRoute?period=10s
+
+fromRESTRoute: timer:restRoute?period=10s
+toRESTRoute: http://localhost:8081/country
+countryDBNode: jdbc:dataSource
+countrySelectNode: sql:SELECT * FROM country WHERE country_code = :#countryId?dataSource=#dataSource
 
 message: DEV Environment
 
